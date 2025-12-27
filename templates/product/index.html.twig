@@ -1,20 +1,53 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello ProductController!{% endblock %}
+{% block title %}Products{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+<div class="container mt-5">
+    <div class="d-flex justify-content-between mb-3">
+        <h1>Products</h1>
+        <a href="{{ path('app_product_create') }}" class="btn btn-success">Create Product</a>
+    </div>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>/media/nihad/HDD21/PHP Learning/first-mvc-symfony/src/Controller/ProductController.php</code></li>
-        <li>Your template at <code>/media/nihad/HDD21/PHP Learning/first-mvc-symfony/templates/product/index.html.twig</code></li>
-    </ul>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Categories</th>
+            <th>Created At</th>
+            <th>Updated At</th>
+            <th>Operations</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for product in products %}
+            <tr>
+                <td>{{ product.id }}</td>
+                <td>{{ product.name }}</td>
+                <td>{{ product.price }}</td>
+                <td>
+                    {% for category in product.categories %}
+                        {{ category.name }}{% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                </td>
+                <td>{{ product.createdAt|date('Y-m-d H:i') }}</td>
+                <td>{{ product.updatedAt|date('Y-m-d H:i') }}</td>
+                <td>
+                    <a href="{{ path('app_product_edit', {id: product.id}) }}" class="btn btn-sm btn-primary">Update</a>
+                    <form action="{{ path('app_product_delete', {id: product.id}) }}" method="post" style="display:inline-block;" onsubmit="return confirm('Are you sure?');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ product.id) }}">
+                        <button class="btn btn-sm btn-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="7" class="text-center">No products found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 </div>
 {% endblock %}

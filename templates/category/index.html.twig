@@ -3,45 +3,54 @@
 {% block title %}Categories{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+<div class="container mt-5">
+    <div class="d-flex justify-content-between mb-3">
+        <h1>Categories</h1>
+        <a href="{{ path('app_category_create') }}" class="btn btn-success">
+            Create Category
+        </a>
+    </div>
 
-<div class="mt-5">
-    <h1>Categories</h1>
     <table class="table table-striped">
         <thead>
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">Name</th>
-            <th scope="col">Created At</th>
-            <th scope="col">Updated At</th>
-            <th scope="col">Operations</th>
-          </tr>
+        <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Created At</th>
+            <th>Updated At</th>
+            <th>Operations</th>
+        </tr>
         </thead>
         <tbody>
-          <tr>
-            <th scope="row">3</th>
-            <td>Larry</td>
-            <td>the Bird</td>
-            <td>@twitter</td>
-            <td>
-                <a href="#"
-                   class="btn btn-sm btn-primary">
-                    Update
-                </a>
+        {% for category in categories %}
+            <tr>
+                <td>{{ category.id }}</td>
+                <td>{{ category.name }}</td>
+                <td>{{ category.createdAt|date('Y-m-d H:i') }}</td>
+                <td>{{ category.updatedAt|date('Y-m-d H:i') }}</td>
+                <td>
+                    <a href="{{ path('app_category_edit', {id: category.id}) }}"
+                       class="btn btn-sm btn-primary">
+                        Update
+                    </a>
 
-                <form action="#"
-                      method="post"
-                      style="display:inline-block"
-                      onsubmit="return confirm('Are you sure?');">
-                    <button type="submit" class="btn btn-sm btn-danger">
-                        Delete
-                    </button>
-                </form>
-            </td>
-          </tr>
+                    <form action="{{ path('app_category_delete', {id: category.id}) }}"
+                          method="post"
+                          style="display:inline-block"
+                          onsubmit="return confirm('Are you sure?');">
+                        <input type="hidden" name="_token"
+                               value="{{ csrf_token('delete' ~ category.id) }}">
+                        <button class="btn btn-sm btn-danger">
+                            Delete
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5" class="text-center">No categories found</td>
+            </tr>
+        {% endfor %}
         </tbody>
     </table>
 </div>
